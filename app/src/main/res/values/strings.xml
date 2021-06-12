@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Icon Finder</string>
+    <string name="apiClientId">V0TvTIwhJnKM9BxpClG5cWbZETAvAwkH8Ck5gMktny1BnCS8ywlopXLDt7Gvb1FSV0TvTIwhJnKM9BxpClG5cWbZETAvAwkH8Ck5gMktny1BnCS8ywlopXLDt7Gvb1FS</string>
+    <string name="apiClientSecret">fNPwUHulbzmqrzhXkbttzUqOkqr3QxQlWD18Cu97ilOLU5zB1xD2jA1YC6QKd3x1</string>
+    <string name="baseUrl">https://api.iconfinder.com/</string>
+    <string name="search_hint">Search icons here</string>
+</resources>
