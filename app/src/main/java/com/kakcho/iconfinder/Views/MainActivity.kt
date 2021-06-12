@@ -21,6 +21,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,6 +33,8 @@ import com.kakcho.iconfinder.R
 
 import com.kakcho.iconfinder.Network.ApiService
 import com.kakcho.iconfinder.Network.ResponseCallback
+import com.kakcho.iconfinder.ViewModel.MainActivityViewModel
+import androidx.lifecycle.Observer
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -56,6 +59,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var categoriesList: ArrayList<Category>
     lateinit var downloadUrl: String
     lateinit var searchbutton: Button
+
+    var searchMadeBool = false
+
+    private lateinit var viewModel: MainActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,36 +102,36 @@ class MainActivity : AppCompatActivity() {
             iconTitle.setVisibility(View.VISIBLE)
             searchbtn.setVisibility(View.VISIBLE)
             currentChildPos = 0
-            if(letters>2){
+            if(searchMadeBool == true){
             iconsList!!.clear()
-            iconsetsList!!.clear()}
+            iconsetsList!!.clear()
+            viewModel.clearLists()}
             iconRecycler!!.visibility = View.VISIBLE
             noIconsFoundText!!.visibility = View.GONE
             afterIconsetId = ""
             isQuerySearch = false
             iconAdapter.notifyDataSetChanged()
-            if(letters>2) {
-                getIconSetFromCategory()
+            if(searchMadeBool == true) {
+                viewModel.getIconSetFromCategory()
             }
+            searchMadeBool = false
         })
-
-//        searchbutton.setOnClickListener{
-//            val text = querytext.text
-//            populateIconsListUsingQuery(text.toString().trim { it <= ' ' })
-//            iconsList!!.clear()
-//            iconsetsList!!.clear()
-//            isQuerySearch = true
-//        }
 
         querytext.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.length > 2) {
-                    populateIconsListUsingQuery(s.toString().trim { it <= ' ' })
+//                    populateIconsListUsingQuery(s.toString().trim { it <= ' ' })
+                    viewModel.populateIconsListUsingQuery(s.toString().trim { it <= ' ' })
                     iconsList!!.clear()
                     iconsetsList!!.clear()
+                    viewModel.clearLists()
                     isQuerySearch = true
+                    searchMadeBool = true
+                    loader.visibility = View.VISIBLE
+                    loader.playAnimation()
                 }
+
             }
 
             override fun afterTextChanged(s: Editable) {}
@@ -135,102 +142,35 @@ class MainActivity : AppCompatActivity() {
         iconsList = ArrayList<Icon>()
         categoriesList = ArrayList<Category>()
         var afterCategories = ""
-        getCategories()
-    }
 
-    private fun getCategories() {
-        apiService.getCategories("100", "", object : ResponseCallback<BaseCategories?>{
-            override fun success(t: BaseCategories?) {
+        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+//        getCategories()
 
-                for (i in 0 until t?.categories!!.size) {
-                    categoriesList!!.add(t.categories!!.get(i))
-                    Log.e("CATEGORY " + i, t.categories!!.get(i).name.toString())
-//                    populateIconsList(iconSetResponseBody.iconsets!!.get(i).identifier)
+
+        viewModel.iconsList.observe(this, Observer {
+            iconsList = it
+            if(iconsList != null && iconsList.size>0) {
+                if (currentChildPos == 0 && (iconsList.size > 0)) {
+                    Log.e("PUTTIN DATA", "data " + iconsList.size.toString())
+//                    Toast.makeText(this, "PUTTING DATA " + iconsList.toString(), Toast.LENGTH_SHORT).show()
+                    populateRecyclerIconView()
                 }
-                getIconSetFromCategory()
-            }
-
-            override fun failure(t: BaseCategories?) {
-                Toast.makeText(
-                    this@MainActivity,
-                    t?.message.toString() + "",
-                    Toast.LENGTH_SHORT
-                ).show()
+                iconAdapter.notifyItemInserted(iconsList!!.size - 1)
             }
         })
-    }
 
-    fun getIconSetFromCategory(){
-//        iconsLoadingBar!!.start()
-        val num_categories = categoriesList.size
-        Log.e("I AM IN ICONSET", num_categories.toString())
-        var rnds = (0..num_categories).random()
-        if(rnds == 68 || rnds == 97){
-            rnds += 1
-        }
-        for (i in 0 until categoriesList.size){
-            if(i==rnds){
-            var categoryIdentifier = categoriesList.get(i).identifier
-
-            apiService.getIconSetFromCategories(
-                categoryIdentifier, "10",
-                object : ResponseCallback<BaseIconSet?> {
-
-                    override fun success(iconSetResponseBody: BaseIconSet?) {
-                        for (i in 0 until iconSetResponseBody?.iconsets!!.size) {
-                            iconsetsList!!.add(iconSetResponseBody.iconsets!!.get(i))
-                            Log.d("LOOP MAIN", iconSetResponseBody.iconsets!!.get(i).toString())
-                            populateIconsList(iconSetResponseBody.iconsets!!.get(i).identifier)
-                        }
-                        if(iconSetResponseBody.iconsets!!.size>0){
-                        afterIconsetId = iconSetResponseBody.iconsets!!
-                            .get(iconSetResponseBody.iconsets!!.size - 1).iconset_id!!}
-                        else{
-                            getIconSetFromCategory()
-                        }
-                        if (currentChildPos == 0) populateRecyclerIconView()
-                    }
-
-                    override fun failure(iconSetResponseBody: BaseIconSet?) {
-                        Toast.makeText(
-                            this@MainActivity,
-                            iconSetResponseBody?.message.toString() + "",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            )}
-
-        }
-
-
-    }
-
-    fun populateIconsList(iconsetIdentifer: String?) {
-        apiService.getIcons(
-            iconsetIdentifer,
-            object : ResponseCallback<BaseIcons?> {
-
-                override fun success(iconResponseBody: BaseIcons?) {
-                    for (icon in iconResponseBody?.icons!!) {
-                        iconsList!!.add(icon)
-                        Log.v("iconname", icon.icon_id.toString())
-                    }
-                    iconAdapter.notifyItemInserted(iconsList!!.size - 1)
-//                    iconsLoadingBar!!.stop()
+        viewModel.triggerLoader.observe(this, Observer {
                     loader.visibility = View.GONE
                     loader.pauseAnimation()
-                }
+        })
 
-                override fun failure(iconResponseBody: BaseIcons?) {
-                    Toast.makeText(
-                        this@MainActivity,
-                        iconResponseBody?.message.toString() + "",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
+        populateRecyclerIconView()
+        viewModel.getCategories()
+
+
     }
+
+
 
     private fun populateRecyclerIconView() {
         iconAdapter = object : IconAdapter(this, iconsList) {
@@ -238,7 +178,8 @@ class MainActivity : AppCompatActivity() {
                 if (!isQuerySearch) {
 //                    populateIconsetsList()
                     Log.d("CHANGING POSITION", "currentChildPos = " + currentChildPos + "  position = " + position)
-                    getIconSetFromCategory()
+//                    getIconSetFromCategory()
+                    viewModel.getIconSetFromCategory()
                     currentChildPos = position
                 }
             }
@@ -293,28 +234,6 @@ class MainActivity : AppCompatActivity() {
             Log.v("TAG", "Permission: " + permissions[0] + "was " + grantResults[0])
             downloadIconManager()
         }
-    }
-
-    fun populateIconsListUsingQuery(query: String?) {
-        apiService.getIconsFromSearch(
-            query,
-            "40",
-            object : ResponseCallback<BaseIcons?> {
-                override fun success(iconResponseBody: BaseIcons?) {
-                    for (icon in iconResponseBody?.icons!!) {
-                        iconsList!!.add(icon)
-                        Log.v("iconname", icon.icon_id.toString())
-                    }
-                    noIconsFoundText!!.visibility = View.GONE
-                    iconRecycler!!.visibility = View.VISIBLE
-                    populateRecyclerIconView()
-                }
-
-                override fun failure(iconResponseBody: BaseIcons?) {
-                    noIconsFoundText!!.visibility = View.VISIBLE
-                    iconRecycler!!.visibility = View.GONE
-                }
-            })
     }
 
     fun downloadIconManager() {

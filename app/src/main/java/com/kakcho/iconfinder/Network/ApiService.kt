@@ -1,8 +1,5 @@
 package com.kakcho.iconfinder.Network
 
-
-//import com.kakcho.iconfinder.ResponseBody.IconResponseBody
-//import com.kakcho.iconfinder.ResponseBody.IconSetResponseBody
 import com.kakcho.iconfinder.Model.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
