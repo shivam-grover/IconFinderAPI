@@ -1,6 +1,6 @@
 package com.kakcho.iconfinder.Network
 
-class ApiCredential {
+class IconFinderCredentials {
 
         //   public static final String apiClientId="7b2K2UDSoiAo7m2ZQmwK9BnYWcDkIjkZsEmDigifUAr7FZ93LTR9jgcmD5lCPfyH";
         val apiClientId = "V0TvTIwhJnKM9BxpClG5cWbZETAvAwkH8Ck5gMktny1BnCS8ywlopXLDt7Gvb1FS"

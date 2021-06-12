@@ -13,7 +13,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class ApiService {
-    var iconFinderApi: IconFinderApi
+    var iconFinderApi: IconFinderAPIMethods
 
     fun getIconsFromSearch(query:String?, count:String?, callback: ResponseCallback<BaseIcons?>){
         val call: Call<BaseIcons?>? =
@@ -175,6 +175,6 @@ class ApiService {
     }
 
     init {
-        iconFinderApi = client!!.create(IconFinderApi::class.java)
+        iconFinderApi = client!!.create(IconFinderAPIMethods::class.java)
     }
 }

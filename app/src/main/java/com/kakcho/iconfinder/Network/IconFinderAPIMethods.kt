@@ -10,7 +10,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 
-interface IconFinderApi {
+interface IconFinderAPIMethods {
 
     @Headers("Authorization: Bearer fNPwUHulbzmqrzhXkbttzUqOkqr3QxQlWD18Cu97ilOLU5zB1xD2jA1YC6QKd3x1")
     @GET("/v4/iconsets")
