@@ -2,12 +2,9 @@ package com.kakcho.iconfinder.Repository
 
 import android.app.Application
 import android.util.Log
-import android.view.View
 import android.widget.Toast
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.kakcho.iconfinder.Model.*
-import com.kakcho.iconfinder.Network.ApiService
 import com.kakcho.iconfinder.Network.ResponseCallback
 
 class MainActivityRepository (val application: Application) {
@@ -25,7 +22,8 @@ class MainActivityRepository (val application: Application) {
     var triggerLoader = MutableLiveData<Boolean>()
     var populateRV = MutableLiveData<Boolean>()
 
-    var apiService: ApiService = ApiService()
+//    var apiService: APIMethods = APIMethods()
+    var apiService: APIMethods_RxJava = APIMethods_RxJava()
 
     fun getCategories(){
 

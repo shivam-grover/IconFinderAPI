@@ -31,10 +31,10 @@ import com.kakcho.iconfinder.Model.*
 
 import com.kakcho.iconfinder.R
 
-import com.kakcho.iconfinder.Network.ApiService
-import com.kakcho.iconfinder.Network.ResponseCallback
+//import com.kakcho.iconfinder.Repository.APIMethods
 import com.kakcho.iconfinder.ViewModel.MainActivityViewModel
 import androidx.lifecycle.Observer
+import com.kakcho.iconfinder.Repository.APIMethods_RxJava
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -52,13 +52,14 @@ class MainActivity : AppCompatActivity() {
     lateinit var iconName: String
     var isQuerySearch = false
     var afterIconsetId = ""
-    lateinit var apiService: ApiService
+//    lateinit var apiService: APIMethods_RxJava
     lateinit var iconsetsList: ArrayList<IconSet>
     var currentChildPos = 0
     lateinit var iconsList: ArrayList<Icon>
     lateinit var categoriesList: ArrayList<Category>
     lateinit var downloadUrl: String
     lateinit var searchbutton: Button
+    lateinit var searchBackground: ImageView
 
     var searchMadeBool = false
 
@@ -71,6 +72,8 @@ class MainActivity : AppCompatActivity() {
         searchbutton.visibility = View.GONE
         iconRecycler = findViewById(R.id.iconsRv)
         noIconsFoundText = findViewById(R.id.noIconsFoundTv)
+        searchBackground = findViewById(R.id.searchbackground)
+        searchBackground.visibility = View.GONE
         loader = findViewById(R.id.loaderlottie)
         val actionBar: androidx.appcompat.app.ActionBar? = getSupportActionBar()
         if (actionBar != null) {
@@ -86,12 +89,15 @@ class MainActivity : AppCompatActivity() {
         IconImg = v.findViewById(R.id.appIconImageView)
         iconTitle = v.findViewById(R.id.appTitle)
         searchbtn.setOnClickListener{
+            iconRecycler.smoothScrollToPosition(0);
 //            searchbutton.visibility = View.VISIBLE
             searchbtn.setVisibility(View.GONE)
             cross.setVisibility(View.VISIBLE)
             querytext.setVisibility(View.VISIBLE)
             IconImg.setVisibility(View.GONE)
             iconTitle.setVisibility(View.GONE)
+            searchBackground.visibility = View.VISIBLE
+            iconRecycler.visibility = View.GONE
         }
         cross.setOnClickListener(View.OnClickListener {
             val letters = querytext.text.length
@@ -112,17 +118,23 @@ class MainActivity : AppCompatActivity() {
             isQuerySearch = false
             iconAdapter.notifyDataSetChanged()
             if(searchMadeBool == true) {
+                loader.visibility = View.VISIBLE
+                loader.playAnimation()
                 viewModel.getIconSetFromCategory()
             }
+            iconRecycler.visibility = View.VISIBLE
             searchMadeBool = false
+            searchBackground.visibility = View.GONE
         })
 
         querytext.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.length > 2) {
+                    iconRecycler.visibility = View.VISIBLE
 //                    populateIconsListUsingQuery(s.toString().trim { it <= ' ' })
                     viewModel.populateIconsListUsingQuery(s.toString().trim { it <= ' ' })
+                    searchBackground.visibility = View.GONE
                     iconsList!!.clear()
                     iconsetsList!!.clear()
                     viewModel.clearLists()
@@ -131,13 +143,19 @@ class MainActivity : AppCompatActivity() {
                     loader.visibility = View.VISIBLE
                     loader.playAnimation()
                 }
+                else{
+                    if(searchMadeBool == true) {
+                        iconRecycler.visibility = View.GONE
+                        searchBackground.visibility = View.VISIBLE
+                    }
+                }
 
             }
 
             override fun afterTextChanged(s: Editable) {}
         })
         actionBar?.setCustomView(v)
-        apiService = ApiService()
+//        apiService = APIMethods()
         iconsetsList = ArrayList<IconSet>()
         iconsList = ArrayList<Icon>()
         categoriesList = ArrayList<Category>()
