@@ -28,16 +28,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.kakcho.iconfinder.RecyclerAdapter.IconAdapter
 import com.kakcho.iconfinder.Model.*
-
+import androidx.activity.viewModels
+import dagger.hilt.android.AndroidEntryPoint
 import com.kakcho.iconfinder.R
 
 //import com.kakcho.iconfinder.Repository.APIMethods
 import com.kakcho.iconfinder.ViewModel.MainActivityViewModel
 import androidx.lifecycle.Observer
 import com.kakcho.iconfinder.Repository.APIMethods_RxJava
+import dagger.hilt.android.HiltAndroidApp
 import java.util.*
 import kotlin.collections.ArrayList
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     lateinit var searchbtn: ImageButton
     lateinit var cross: ImageButton
@@ -63,7 +66,9 @@ class MainActivity : AppCompatActivity() {
 
     var searchMadeBool = false
 
-    private lateinit var viewModel: MainActivityViewModel
+//    private lateinit var viewModel: MainActivityViewModel
+
+    private val viewModel: MainActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -161,7 +166,7 @@ class MainActivity : AppCompatActivity() {
         categoriesList = ArrayList<Category>()
         var afterCategories = ""
 
-        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+//        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 //        getCategories()
 
 

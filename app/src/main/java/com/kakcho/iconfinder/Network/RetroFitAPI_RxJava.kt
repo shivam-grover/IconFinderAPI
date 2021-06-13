@@ -13,6 +13,10 @@ import retrofit2.http.Query
 
 interface RetroFitAPI_RxJava {
 
+    companion object {
+        const val BASE_URL = "https://api.iconfinder.com/"
+    }
+
     @Headers("Authorization: Bearer fNPwUHulbzmqrzhXkbttzUqOkqr3QxQlWD18Cu97ilOLU5zB1xD2jA1YC6QKd3x1")
     @GET("/v4/iconsets")
     fun getIconsets(
