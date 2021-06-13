@@ -4,14 +4,21 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.kakcho.iconfinder.Model.Category
 import com.kakcho.iconfinder.Model.Icon
 import com.kakcho.iconfinder.Model.IconSet
+import com.kakcho.iconfinder.Network.RetroFitAPI_RxJava
 import com.kakcho.iconfinder.Repository.MainActivityRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MainActivityViewModel (application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class MainActivityViewModel @Inject constructor(
+    private val iconFinderApi: RetroFitAPI_RxJava
+) : ViewModel() {
 
-    private val mainActivityRepository = MainActivityRepository(application)
+    private val mainActivityRepository = MainActivityRepository(iconFinderApi)
 
     var iconsetsList : LiveData<ArrayList<IconSet>>
     var iconsList : LiveData <ArrayList<Icon>>

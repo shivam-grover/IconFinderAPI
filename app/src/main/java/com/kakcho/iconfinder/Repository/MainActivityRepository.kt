@@ -6,8 +6,13 @@ import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.kakcho.iconfinder.Model.*
 import com.kakcho.iconfinder.Network.ResponseCallback
+import com.kakcho.iconfinder.Network.RetroFitAPI_RxJava
+import javax.inject.Inject
 
-class MainActivityRepository (val application: Application) {
+class MainActivityRepository (val iconFinderApi: RetroFitAPI_RxJava) {
+
+//    @Inject
+//    lateinit var iconFinderApi: RetroFitAPI_RxJava
 
     var iconsetsList = ArrayList<IconSet>()
     var iconsList = ArrayList<Icon>()
@@ -23,7 +28,7 @@ class MainActivityRepository (val application: Application) {
     var populateRV = MutableLiveData<Boolean>()
 
 //    var apiService: APIMethods = APIMethods()
-    var apiService: APIMethods_RxJava = APIMethods_RxJava()
+    var apiService: APIMethods_RxJava = APIMethods_RxJava(iconFinderApi)
 
     fun getCategories(){
 
@@ -38,7 +43,7 @@ class MainActivityRepository (val application: Application) {
                 getIconSetFromCategory()
             }
             override fun failure(t: BaseCategories?) {
-                Toast.makeText(application,t?.message.toString() + "",Toast.LENGTH_SHORT).show()
+//                Toast.makeText(application,t?.message.toString() + "",Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -78,11 +83,11 @@ class MainActivityRepository (val application: Application) {
                         }
 
                         override fun failure(iconSetResponseBody: BaseIconSet?) {
-                            Toast.makeText(
-                                application,
-                                iconSetResponseBody?.message.toString() + "",
-                                Toast.LENGTH_SHORT
-                            ).show()
+//                            Toast.makeText(
+//                                application,
+//                                iconSetResponseBody?.message.toString() + "",
+//                                Toast.LENGTH_SHORT
+//                            ).show()
                         }
                     }
                 )}
@@ -109,8 +114,8 @@ class MainActivityRepository (val application: Application) {
                 }
 
                 override fun failure(iconResponseBody: BaseIcons?) {
-                    Toast.makeText(application,iconResponseBody?.message.toString() + "",
-                        Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(application,iconResponseBody?.message.toString() + "",
+//                        Toast.LENGTH_SHORT).show()
                 }
             })
 

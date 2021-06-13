@@ -2,14 +2,19 @@ package com.kakcho.iconfinder.Repository
 
 import com.kakcho.iconfinder.Model.*
 import com.kakcho.iconfinder.Network.ResponseCallback
+import com.kakcho.iconfinder.Network.RetroFitAPI_RxJava
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-class APIMethods_RxJava {
+class APIMethods_RxJava (iconFinderApi: RetroFitAPI_RxJava){
+
+
+    private var iconFinderApi = iconFinderApi
 
     fun getIconsFromSearch(query:String?, count:String?, callback: ResponseCallback<BaseIcons?>){
-        var iconFinderApi: Observable<BaseIcons?>? = ServiceBuilder.buildService().getIconsFromSearch(query, count)
+        var iconFinderApi: Observable<BaseIcons?>? = iconFinderApi.getIconsFromSearch(query, count)
 
             fun onResponse(
                 response: BaseIcons?
@@ -29,7 +34,7 @@ class APIMethods_RxJava {
 
     fun getIconSetFromCategories(category_identifier: String?, count: String?, callback: ResponseCallback<BaseIconSet?>){
 
-        var iconFinderApi: Observable<BaseIconSet?>? = ServiceBuilder.buildService().getIconSetFromCategories(category_identifier, count)
+        var iconFinderApi: Observable<BaseIconSet?>? = iconFinderApi.getIconSetFromCategories(category_identifier, count)
 
             fun onResponse(response: BaseIconSet?) {
 //                if (response!!.isSuccessful()) {
@@ -55,7 +60,7 @@ class APIMethods_RxJava {
 
     fun getCategories(count: String?, afterIconsetId: String?, callback: ResponseCallback<BaseCategories?>){
 
-        var iconFinderApi: Observable<BaseCategories?>? = ServiceBuilder.buildService().getCategories(count, afterIconsetId)
+        var iconFinderApi: Observable<BaseCategories?>? = iconFinderApi.getCategories(count, afterIconsetId)
 
         fun onResponse(
             response: BaseCategories?
@@ -87,7 +92,7 @@ class APIMethods_RxJava {
         afterIconsetId: String?,
         callback: ResponseCallback<BaseIconSet?>
     ) {
-        var iconFinderApi: Observable<BaseIconSet?>? = ServiceBuilder.buildService().getIconsets(count, afterIconsetId)
+        var iconFinderApi: Observable<BaseIconSet?>? = iconFinderApi.getIconsets(count, afterIconsetId)
 
 
         fun onResponse(
@@ -120,7 +125,7 @@ class APIMethods_RxJava {
         iconsetIdentifer: String?,
         callback: ResponseCallback<BaseIcons?>
     ) {
-        var iconFinderApi: Observable<BaseIcons?>? = ServiceBuilder.buildService().getIcons(iconsetIdentifer)
+        var iconFinderApi: Observable<BaseIcons?>? = iconFinderApi.getIcons(iconsetIdentifer)
 
         fun onResponse(
             response: BaseIcons?
